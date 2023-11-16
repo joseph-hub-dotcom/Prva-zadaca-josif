@@ -39,3 +39,46 @@ public class TCPServer {
         }
     }
 }
+
+
+
+//Vtor del dole
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class TCPClient {
+    public static void main(String[] args) {
+        final String SERVER_IP = "127.0.0.1"; // Адресата на серверот
+        final int SERVER_PORT = 12345;
+
+        try (Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+             BufferedReader serverIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+            String message;
+
+            do {
+                // Внеси порака од тастатура
+                System.out.print("Внесете порака: ");
+                message = userInput.readLine();
+
+                // Прати ја пораката кон серверот
+                out.println(message);
+
+                // Прими и отпечати ја одговорната порака од серверот
+                String serverResponse = serverIn.readLine();
+                System.out.println("Одговор од сервер: " + serverResponse);
+
+            } while (!message.equals("KRAJ"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
