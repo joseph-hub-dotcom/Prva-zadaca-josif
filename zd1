@@ -1,0 +1,41 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class TCPServer {
+    public static void main(String[] args) {
+        final int PORT = 12345;
+
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Серверот е вклучен. Чекам за клиент...");
+
+            // Чекај за клиент да се поврзе
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Клиентот се поврза.");
+
+            // Влезен поток за читање од клиентот
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            // Излезен поток за пишување кон клиентот
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            String message;
+
+            do {
+                // Читај порака од клиентот
+                message = in.readLine();
+                System.out.println("Порака од клиент: " + message);
+
+                // Прати ја пораката назад кон клиентот
+                out.println("Примена порака од сервер: " + message);
+            } while (!message.equals("KRAJ"));
+
+            System.out.println("Крај на врската.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
